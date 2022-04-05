@@ -1,2 +1,2 @@
 # main
-Hello, I am Tim. I do code.
+Attempting to build an app with flask.
