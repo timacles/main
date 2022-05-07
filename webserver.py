@@ -13,33 +13,30 @@ from flask import render_template
 from flask import Markup
 from flask_bootstrap import Bootstrap
 import chess
-import chess.svg
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 bootstrap = Bootstrap(app)
 
 @app.route('/')
 def index():
-    board = chess.Board("8/2K5/4B3/3N4/8/8/4k3/8 b - - 0 1")
+    board = chess.Board()
     board2 = chess.svg.board(
      board,
-     fill=dict.fromkeys(board.attacks(chess.E4), "#cc0000cc") | {chess.E4: "#000000cc"},
+     #fill=dict.fromkeys(board.attacks(chess.E4), "#cc0000cc") | {chess.E4: "#000000cc"},
      #arrows=[chess.svg.Arrow(chess.E4, chess.F1, color="#0000cccc")],
-     squares=chess.SquareSet(chess.BB_DARK_SQUARES & chess.BB_FILE_B),
-     size=550,
+     #squares=chess.SquareSet(chess.BB_DARK_SQUARES & chess.BB_FILE_B),
+     size=450,
      )
 
-    piece = Markup(chess.svg.piece(chess.Piece.from_symbol("R"), size=50))   
     board2 = Markup(board2)
     return render_template('chess.html', 
                             chess=board2,
-                            piece=piece, 
                             mimetype='image/svg+xml')
 
 
-@app.route('/user/<name>')
-def user(name):
-    return render_template('user.html', name=name)
+@app.route('/chess')
+def chess():
+    return render_template('demo.html')
 
 
 @app.route("/resp/<name>")
