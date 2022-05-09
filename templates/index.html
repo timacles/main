@@ -1,1 +1,31 @@
-<h1>Hello World!</h1>
+<html>
+    <head>
+        <title>chess js </title>
+
+        <link rel="stylesheet" type="text/css" href="static/chessboard-1.0.0.min.css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>        
+        <script type="text/javascript" src="static/chessboard-1.0.0.min.js"></script>
+        
+        <div id="board2" style="width: 400px"></div>
+        <button id="startBtn">Start Position</button>
+        <button id="clearBtn">Clear Board</button>
+
+        <script type="text/javascript"> 
+
+              var board2 = Chessboard('board2', {
+                draggable: true,
+                dropOffBoard: 'trash',
+                sparePieces: true
+              })
+
+              $('#startBtn').on('click', board2.start)
+              $('#clearBtn').on('click', board2.clear)
+
+               </script>
+    </head>
+    
+    <body>
+        <div id="chessBoard1"></div>
+    </body>
+</html>

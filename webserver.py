@@ -36,7 +36,7 @@ def index():
 
 @app.route('/chess')
 def chess():
-    return render_template('demo.html')
+    return render_template('index.html')
 
 
 @app.route("/resp/<name>")
