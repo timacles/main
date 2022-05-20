@@ -13,38 +13,23 @@ from flask import render_template
 from flask import Markup
 from flask_bootstrap import Bootstrap
 import chess
+import json
 
 app = Flask(__name__, static_url_path='/static')
 bootstrap = Bootstrap(app)
 
-@app.route('/')
-def index():
-    board = chess.Board()
-    board2 = chess.svg.board(
-     board,
-     #fill=dict.fromkeys(board.attacks(chess.E4), "#cc0000cc") | {chess.E4: "#000000cc"},
-     #arrows=[chess.svg.Arrow(chess.E4, chess.F1, color="#0000cccc")],
-     #squares=chess.SquareSet(chess.BB_DARK_SQUARES & chess.BB_FILE_B),
-     size=450,
-     )
 
-    board2 = Markup(board2)
-    return render_template('chess.html', 
-                            chess=board2,
-                            mimetype='image/svg+xml')
-
+@app.route('/move')
+def move():
+    print(request.args.get('from', default=''))
+    response = app.response_class(
+                        response='test321',
+                        status=200)
+    return response
 
 @app.route('/chess')
 def chess():
     return render_template('index.html')
-
-
-@app.route("/resp/<name>")
-def index2(name):
-    response = make_response('<h1>This document carries a cookie!</h1>')
-    response.set_cookie('answer', '42')
-    return response
-
 
 if __name__=="__main__":
     app.run(host="0.0.0.0", port=80, debug=True)

@@ -7,20 +7,29 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>        
         <script type="text/javascript" src="static/chessboard-1.0.0.min.js"></script>
         
-        <div id="board2" style="width: 400px"></div>
+        <div id="board" style="width: 400px"></div>
         <button id="startBtn">Start Position</button>
         <button id="clearBtn">Clear Board</button>
+        <button id="SendMsg">Send</button>
 
         <script type="text/javascript"> 
+          
+            var position1 = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R';
 
-              var board2 = Chessboard('board2', {
-                draggable: true,
-                dropOffBoard: 'trash',
-                sparePieces: true
-              })
+            var board2 = Chessboard('board', {
+                            position: position1,
+                            draggable: true,
+                            showNotation: false})
+            
+            function sendMove() {
+                $.get('/move', 
+                              {'from': position1},
+                              function(r) {console.log(r)});     
+            } 
 
-              $('#startBtn').on('click', board2.start)
-              $('#clearBtn').on('click', board2.clear)
+            $('#startBtn').on('click', board2.start)
+            $('#clearBtn').on('click', board2.clear)
+            $('#SendMsg').on('click', sendMove)
 
                </script>
     </head>
