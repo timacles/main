@@ -80,3 +80,54 @@ _, err = blobURL.Delete(ctx, DeleteSnapshotsOptionNone, BlobAccessConditions{})
 if err != nil {
 	log.Fatal(err)
 }
+
+func Example_progressUploadDownload() {
+	// Create a request pipeline using your Storage account's name and account key.
+	accountName, accountKey := accountInfo()
+	credential, err := NewSharedKeyCredential(accountName, accountKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+	p := NewPipeline(credential, PipelineOptions{})
+
+	// From the Azure portal, get your Storage account blob service URL endpoint.
+	cURL, _ := url.Parse(fmt.Sprintf("https://%s.blob.core.windows.net/mycontainer", accountName))
+
+	// Create an ServiceURL object that wraps the service URL and a request pipeline to making requests.
+	containerURL := NewContainerURL(*cURL, p)
+
+	ctx := context.Background() // This example uses a never-expiring context
+	// Here's how to create a blob with HTTP headers and metadata (I'm using the same metadata that was put on the container):
+	blobURL := containerURL.NewBlockBlobURL("Data.bin")
+
+	// requestBody is the stream of data to write
+	requestBody := strings.NewReader("Some text to write")
+
+	// Wrap the request body in a RequestBodyProgress and pass a callback function for progress reporting.
+	_, err = blobURL.Upload(ctx, pipeline.NewRequestBodyProgress(requestBody, func(bytesTransferred int64) {
+		fmt.Printf("Wrote %d of %d bytes.", bytesTransferred, requestBody.Size())
+	}), BlobHTTPHeaders{
+		ContentType:        "text/html; charset=utf-8",
+		ContentDisposition: "attachment",
+	}, Metadata{}, BlobAccessConditions{}, DefaultAccessTier, nil, ClientProvidedKeyOptions{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Here's how to read the blob's data with progress reporting:
+	get, err := blobURL.Download(ctx, 0, 0, BlobAccessConditions{}, false, ClientProvidedKeyOptions{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Wrap the response body in a ResponseBodyProgress and pass a callback function for progress reporting.
+	responseBody := pipeline.NewResponseBodyProgress(get.Body(RetryReaderOptions{}),
+		func(bytesTransferred int64) {
+			fmt.Printf("Read %d of %d bytes.", bytesTransferred, get.ContentLength())
+		})
+
+	downloadedData := &bytes.Buffer{}
+	downloadedData.ReadFrom(responseBody)
+	responseBody.Close() // The client must close the response body when finished with it
+	// The downloaded blob data is in downloadData's buffer
+}
