@@ -23,7 +23,7 @@ bootstrap = Bootstrap(app)
 def move():
     print(request.args.get('from', default=''))
     response = app.response_class(
-                        response='test321',
+                        response='test123 123 ',
                         status=200)
     return response
 
