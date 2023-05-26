@@ -17,16 +17,14 @@
             var position1 = 'r1bqkbnr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R';
 
             var board = Chessboard('board', 
-                            {position: position1,
+                            {position: 'start',
                             draggable: true,
                             showNotation: false,
                             onDrop: onDrop
                         })
             
             function sendMove() {
-                $.get('/move', 
-                    {'from': board.fen()},
-                    function(r) {console.log(r, board.fen())});     
+                $.get('/move', {'from': board.fen()}, function(r) {console.log('resp' + r, board.fen())});     
             } 
 
              // snapback black pieces when they are dropped
