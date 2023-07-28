@@ -23,16 +23,21 @@ function sendMove() {
         '/move', 
         { 'from': game.fen()}, 
         function(r) {
-            console.log('resp: ', r);
-            console.log('game.fen: ', game.fen());
+            //console.log('resp: ', r);
+            //console.log('game.fen: ', game.fen());
+            //console.log("turn:", game.turn())
             board.position(r)
+            game.load(r)
         }
     );     
 } 
 
 function onDragStart (source, piece, position, orientation) {
   // do not pick up pieces if the game is over
-  if (game.game_over()) return false
+  if (game.game_over()) {
+    console.log('game over') 
+    return false
+  }
 
   // only pick up pieces for the side to move
   if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
@@ -65,7 +70,12 @@ function onDrop (source, target, piece, newPos, oldPos, orientation) {
 
 }
 
-$('#startBtn').on('click', board.start)
+function startOver() {
+    board.start
+    game = new Chess()    
+}
+
+$('#startBtn').on('click', startOver)
 $('#clearBtn').on('click', board.clear)
 $('#SendMsg').on('click', sendMove)
 
