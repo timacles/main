@@ -11,20 +11,24 @@ import chess
 import chess.engine
 import json
 import asyncio
-import stockfish
+from stockfish import Play
 
 app = Flask(__name__, static_url_path='/static')
 bootstrap = Bootstrap(app)
+stockfish = Play()
 
-board = chess.Board("r1bqkbnr/p1pp1ppp/1pn5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 2 4")
+#gboard = chess.Board("r1bqkbnr/p1pp1ppp/1pn5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 2 4")
 
 @app.route('/move')
 def move():
     board_get = request.args.get('from', default='')
     board = chess.Board(board_get)
-    print(board)
+    stockfish.move(board)
+    print("response:\n",board)
+    print("fen:\n",board.fen())
     response = app.response_class(
-                        response=str(board),
+                        #response=str(board),
+                        response=board.fen(),
                         status=200)
     return response
 
